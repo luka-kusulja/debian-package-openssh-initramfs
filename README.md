@@ -16,9 +16,9 @@ Clone, prepare and build sources:
 ```
 git clone https://github.com/wget/openssh-initramfs.git
 cd openssh-initramfs/
-tar -cvzf openssh-initramfs_1.3.orig.tar.gz openssh-initramfs-1.3/usr/
-mv openssh-initramfs-1.3/usr/ openssh-initramfs-1.3/debian/
-cd openssh-initramfs-1.3/
+tar -cvzf openssh-initramfs_1.3.orig.tar.gz openssh-initramfs/usr/
+mv openssh-initramfs/usr/ openssh-initramfs/debian/
+cd openssh-initramfs/
 debuild -us -uc
 ```
 
@@ -28,7 +28,7 @@ $ debuild -us -uc
 This package has a Debian revision number but there does not seem to be
 an appropriate original tar file or .orig directory in the parent directory;
 (expected one of openssh-initramfs_1.3.orig.tar.gz, openssh-initramfs_1.3.orig.tar.bz2,
-openssh-initramfs_1.3.orig.tar.lzma,  openssh-initramfs_1.3.orig.tar.xz or openssh-initramfs-1.3.orig)
+openssh-initramfs_1.3.orig.tar.lzma,  openssh-initramfs_1.3.orig.tar.xz or openssh-initramfs.orig)
 continue anyway? (y/n) y
 [...]
 dpkg-source: error: can't build with source format '3.0 (quilt)': no upstream tarball found at ../openssh-initramfs_1.3.orig.tar.{bz2,gz,lzma,xz}
