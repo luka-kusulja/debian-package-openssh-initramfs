@@ -13,7 +13,12 @@ case "$1" in
     ;;
 esac
 
-for IFACE in /sys/class/net/${IFDOWN:-*}; do
+IFDOWN="*"
+if [ -e /etc/openssh-initramfs/config ]; then
+    . /etc/openssh-initramfs/config
+fi
+
+for IFACE in /sys/class/net/${IFDOWN}; do
     [ -e "$IFACE" ] || continue
     IFACE="${IFACE#/sys/class/net/}"
     ip link    set   dev "$IFACE" down

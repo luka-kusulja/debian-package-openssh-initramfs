@@ -1,6 +1,5 @@
 # Override variables from /etc/initramfs-tools/initramfs.conf, see
 # initramfs-tools(8)
-#
 
 # Set the umask value of the generated initramfs file to avoid
 # disclosing SSH host keys.

@@ -1,0 +1,13 @@
+Package: openssh-initramfs
+Version: 2.0.0-1
+Architecture: all
+Maintainer: Andre Lehmann <aisberg@posteo.de>
+Depends: openssh-server, initramfs-tools (>= 0.94), busybox | busybox-static, udev
+Recommends: cryptsetup
+Breaks: dropbear-initramfs
+Replaces: dropbear-initramfs
+Section: net
+Priority: optional
+Multi-Arch: foreign
+Description: OpenSSH server - initramfs integration
+ This package provides initramfs integration for the OpenSSH server.
