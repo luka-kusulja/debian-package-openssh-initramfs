@@ -3,13 +3,13 @@
 # for other files under the '/etc/openssh-initramfs' directory).
 
 # Overwrite the SSH listen port in initramfs
-#SSH_PORT=22
+SSH_PORT=20123
 
 # Command line options to pass to sshd(8)
-#SSH_OPTIONS="-o PermitRootLogin=prohibit-password"
+SSH_OPTIONS="-o ForceCommand=cryptroot-unlock"
 
 # space separated list of user to copy the authorized keys from
-SSH_AUTHORIZED_KEYS_FROM="root"
+SSH_AUTHORIZED_KEYS_FROM="{currentuser}"
 
 # On local (non-NFS) mounts, interfaces matching this pattern are
 # brought down before exiting the ramdisk to avoid dirty network

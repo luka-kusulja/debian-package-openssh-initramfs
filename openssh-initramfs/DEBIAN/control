@@ -1,7 +1,7 @@
 Package: openssh-initramfs
-Version: 2.0.0-1
+Version: 3.0.0-1
 Architecture: all
-Maintainer: Andre Lehmann <aisberg@posteo.de>
+Maintainer: Luka Kusulja <luka-kusulja@use.github.com>
 Depends: openssh-server, initramfs-tools (>= 0.94), busybox | busybox-static, udev
 Recommends: cryptsetup
 Breaks: dropbear-initramfs

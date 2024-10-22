@@ -1,1 +1,2 @@
 /etc/openssh-initramfs/config
+/etc/openssh-initramfs/sshd_config

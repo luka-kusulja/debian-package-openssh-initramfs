@@ -27,7 +27,7 @@ run_openssh() {
     # create privilege separation directory
     mkdir -p /run/sshd
 
-    log_begin_msg "Starting OpenSSH"
+    log_begin_msg "Starting OpenSSH on port $SSH_PORT"
     # using exec and keeping openssh in the foreground enables the init-bottom
     # script to kill the remaining ipconfig processes if someone unlocks the
     # rootfs from the console while the network is being configured

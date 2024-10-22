@@ -39,20 +39,22 @@ done
 
 copy_exec /usr/sbin/sshd /sbin
 
-# In absence of PAM, OpenSSH uses getpwnam() from libnss.
-# src.: https://serverfault.com/a/820605
-LIBC_DIR=$(ldd /usr/sbin/sshd | sed -nr 's#.* => (/lib.*)/libc\.so\.[0-9.-]+ \(0x[[:xdigit:]]+\)$#\1#p')
-find -L "$LIBC_DIR" -maxdepth 1 -name 'libnss_files.*' -type f | while read -r so; do
-   copy_exec "$so"
-done
+current_user=$(logname)
+if [ "$current_user" = "root" ]
+then
+    echo "ERROR: root cannot be used to unlock the server, create new user account"
+    exit 0
+fi
+echo "Only user $current_user will be able to unlock the server"
 
 # Create a specific home directory for the home user
-home=$(mktemp -d "$DESTDIR/root-XXXXXX")
+home=$(mktemp -d "$DESTDIR/$current_user-XXXXXX")
 chmod 0700 "$home"
-for x in passwd group; do echo "$x: files"; done >"$DESTDIR/etc/nsswitch.conf"
-echo "root:*:0:0:root:${home#$DESTDIR}:/bin/sh" >"$DESTDIR/etc/passwd"
+echo "passwd: files" >"$DESTDIR/etc/nsswitch.conf"
+echo "group: files" >"$DESTDIR/etc/nsswitch.conf"
+echo "$current_user:*:0:11:$current_user:${home#$DESTDIR}:/bin/sh" >"$DESTDIR/etc/passwd"
 echo "sshd:x:105:65534::/run/sshd:/usr/sbin/nologin" >>"$DESTDIR/etc/passwd"
-echo "root:x:0:" >"$DESTDIR/etc/group"
+echo "$current_user:x:11:" >"$DESTDIR/etc/group"
 
 # Copy SSH daemon configuration
 mkdir -p "$DESTDIR/etc/ssh"
@@ -66,31 +68,12 @@ if [ -e /etc/openssh-initramfs/config ]; then
     cp -p "/etc/openssh-initramfs/config" "$DESTDIR/etc/openssh-initramfs"
 fi
 
-# PAM doesn't work, so it will be disabled 
-if ! grep -qE '^#*UsePAM.*$' "$DESTDIR/etc/ssh/sshd_config"; then
-    openssh_warn "No UsePAM statement found in /etc/ssh/sshd_config."
-    openssh_warn "Will append 'UsePAM no' to the initramfs sshd_config file."
-    echo "UsePAM no" >> "$DESTDIR/etc/ssh/sshd_config"
-else
-    sed -i -e 's/^#*UsePAM.*$/UsePAM no/g' "$DESTDIR/etc/ssh/sshd_config"
-fi
-
 # Copy SSH host keys
 host_keys="$(find /etc/openssh-initramfs -name 'ssh_host*key*' 2>/dev/null)"
 if [ -n "$host_keys" ]; then
     cp -p /etc/openssh-initramfs/ssh_host*key* "$DESTDIR/etc/ssh"
 else
     openssh_warn "No SSH host keys found in /etc/openssh-initramfs, remote unlocking with cryptroot-unlock via SSH won't work!"
-fi
-
-# Copy SSH moduli file
-if [ -e /etc/openssh-initramfs/moduli ]; then
-    cp -p "/etc/openssh-initramfs/moduli" "$DESTDIR/etc/ssh"
-elif [ -e /etc/ssh/moduli ]; then
-    openssh_warn "No moduli file find in /etc/openssh-initramfs. The system moduli /etc/ssh/moduli will be copied into the initramfs."
-    cp -p "/etc/ssh/moduli" "$DESTDIR/etc/ssh"
-else
-    openssh_warn "No moduli file found. If Diffie-Hellman group exchange (diffie-hellman-group*) is used, then OpenSSH will fallback to fixed modulus, which is not recommended."
 fi
 
 # Copy authorized_keys
@@ -103,6 +86,11 @@ fi
 chmod 0600 "$home/.ssh/authorized_keys"
 
 for user in $SSH_AUTHORIZED_KEYS_FROM; do
+    if [ "$user" = "{currentuser}" ]
+    then
+        user=$current_user
+    fi
+
     user_home="$(getent passwd $user | cut -f6 -d:)"
     if [ -f "$user_home/.ssh/authorized_keys" ]; then
         echo "Adding authorized keys of $user"

@@ -1,0 +1,17 @@
+Protocol 2
+MaxAuthTries 3
+PermitRootLogin without-password
+PermitEmptyPasswords no
+
+# Disable unused features
+UseDNS no
+IgnoreRhosts yes
+X11Forwarding no
+GSSAPIKeyExchange no
+
+# Disable all auth
+PubkeyAuthentication yes
+UsePAM no
+PasswordAuthentication no
+HostbasedAuthentication no
+GSSAPIAuthentication no

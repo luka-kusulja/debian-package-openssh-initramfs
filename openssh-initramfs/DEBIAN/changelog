@@ -1,3 +1,12 @@
+openssh-initramfs (3.0-1) unstable; urgency=low
+
+  * Don't use root account
+  * Change SSH port
+  * SSH security config
+  * README Changes
+
+ -- Luka Kusulja <luka-kusulja@use.github.com>  Wed, 23 Oct 2024 21:33:00 +0100
+
 openssh-initramfs (2.0-1) unstable; urgency=low
 
   * Complete overhaul of the package
